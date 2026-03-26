@@ -39,7 +39,8 @@ Returns a table with the file attributes corresponding to filepath (or nil follo
 ---@overload fun(filepath:string, result_table:LuaFileSystem.Attributes)
 ---@param filepath string
 ---@param request_name LuaFileSystem.AttributeName
----@return string|integer|LuaFileSystem.AttributeMode
+---@return string|integer|LuaFileSystem.AttributeMode?
+---@return string,integer
 function lfs.attributes(filepath, request_name) end
 
 --[[
@@ -47,7 +48,7 @@ Changes the current working directory to the given path.
 Returns true in case of success or nil plus an error string.
 ]]
 ---@param path string
----@return boolean, string
+---@return boolean?, string
 function lfs.chdir(path) end
 
 --[[
@@ -56,18 +57,31 @@ In case of any errors it returns nil and the error message. In particular, if th
 ]]
 ---@param path string
 ---@param seconds_stale? number
----@return boolean, string
+---@return boolean?, string
 function lfs.lock_dir(path, seconds_stale) end
 
 ---Returns a string with the current working directory or nil plus an error string.
----@return string
+---@return string?, string
 function lfs.currentdir() end
+
+---@class lfs.DirectoryObject
+---@overload fun(...): string?
+lfs.DirectoryObject = {}
+
+---Iterate over the receiver
+---@param self lfs.DirectoryObject
+---@return string?
+function next(self) end
+
+---Iterate over the receiver
+---@param self lfs.DirectoryObject
+function close(self) end
 
 --[[
 Lua iterator over the entries of a given directory. Each time the iterator is called with dir_obj it returns a directory entry's name as a string, or nil if there are no more entries. You can also iterate by calling dir_obj:next(), and explicitly close the directory before the iteration finished with dir_obj:close(). Raises an error if path is not a directory.
 ]]
 ---@param path string
----@return fun():string
+---@return lfs.DirectoryObject
 function lfs.dir(path) end
 
 --[[
@@ -78,7 +92,7 @@ Returns true if the operation was successful; in case of error, it returns nil p
 ---@param mode openmode
 ---@param start? integer
 ---@param length? integer
----@return boolean, string
+---@return boolean?, string
 function lfs.lock(filehandle, mode, start, length) end
 
 --[[
@@ -87,7 +101,7 @@ function lfs.lock(filehandle, mode, start, length) end
 ---@param old string
 ---@param new string
 ---@param symlink? boolean
----@return boolean, string
+---@return boolean?, string
 function lfs.link(old, new, symlink) end
 
 --[[
@@ -95,7 +109,7 @@ function lfs.link(old, new, symlink) end
     Returns true in case of success or nil, an error message and a system-dependent error code in case of error.
 ]]
 ---@param dirname string
----@return boolean, string
+---@return boolean?, string
 function lfs.mkdir(dirname) end
 
 --[[
@@ -103,7 +117,7 @@ function lfs.mkdir(dirname) end
     Returns true in case of success or nil, an error message and a system-dependent error code in case of error.
 ]]
 ---@param dirname string
----@return boolean, string
+---@return boolean?, string
 function lfs.rmdir(dirname) end
 
 --[[
@@ -111,7 +125,7 @@ Sets the writing mode for a file. The mode string can be either "binary" or "tex
 ]]
 ---@param file string
 ---@param mode 'binary'|'text'
----@return boolean, string
+---@return boolean?, string
 function lfs.setmode(file, mode) end
 
 --[[
@@ -129,7 +143,7 @@ Returns true in case of success or nil, an error message and a system-dependent 
 ---@param filepath string
 ---@param atime? integer
 ---@param mtime? integer
----@return boolean, string
+---@return boolean?, string
 function lfs.touch(filepath, atime, mtime) end
 
 --[[
@@ -139,7 +153,7 @@ Returns true if the operation was successful; in case of error, it returns nil p
 ---@param filehandle file*
 ---@param start? integer
 ---@param length? integer
----@return boolean, string
+---@return boolean?, string
 function lfs.unlock(filehandle, start, length) end
 
 return lfs
